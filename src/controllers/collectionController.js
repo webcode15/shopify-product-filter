@@ -8,7 +8,13 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-let newJerseyProducts = JSON.parse(
+const allLocationsProducts = JSON.parse(
+  fs.readFileSync(
+    path.join(__dirname, "./cached/all_products_gid.json"),
+    "utf-8"
+  )
+);
+const newJerseyProducts = JSON.parse(
   fs.readFileSync(
     path.join(__dirname, "./cached/products_gid___shopify_Location_68360798375.json"),
     "utf-8"
@@ -53,8 +59,9 @@ export const collectionController = async (req, res) => {
   } else if (locationId === "gid://shopify/Location/76107481255") {
     products = filterByCollection(warehouseProducts);
     console.log("🧾 warehouseProducts count:", products.length);
-  } else {
-    return res.status(404).json({ error: "Location not found or no cached data" });
+  } else if (locationId === "all_products") {
+    products = filterByCollection(allLocationsProducts);
+    console.log("🧾 allLocationsProducts count:", products.length);
   }
 
   const weightArray = weight ? weight.split(",") : [];

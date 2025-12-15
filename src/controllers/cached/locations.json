@@ -10,5 +10,9 @@
   {
     "id": "gid://shopify/Location/76107481255",
     "name": "Online Only Warehouse"
+  },
+   {
+    "id": "all_products",
+    "name": "Online Only Warehouse"
   }
 ]

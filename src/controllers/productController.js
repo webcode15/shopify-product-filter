@@ -97,7 +97,7 @@ function ensureDirExists(dirPath) {
         const weightOpt = variant.selectedOptions?.find(o => o.name?.toLowerCase() === "weight");
 
         const categories = (prod.collections?.edges || [])
-          .map(edge => edge.node?.title)
+          .map(edge => edge.node?.handle)
           .filter(Boolean);
 
         return {
