@@ -26,6 +26,34 @@ function ensureDirExists(dirPath) {
     console.log(`Directory created.`);
   }
 }
+function mergeIntoGlobalFile(newItems) {
+  const globalFile = path.join(__dirname, "/cached", "products_all_locations.json");
+  ensureDirExists(path.dirname(globalFile));
+
+  let existing = [];
+
+  if (fs.existsSync(globalFile)) {
+    existing = JSON.parse(fs.readFileSync(globalFile, "utf-8"));
+  }
+
+  const map = new Map();
+
+  // existing data
+  for (const item of existing) {
+    map.set(item.variantId, item);
+  }
+
+  // new data
+  for (const item of newItems) {
+    if (map.has(item.variantId)) {
+      map.get(item.variantId).available += item.available;
+    } else {
+      map.set(item.variantId, item);
+    }
+  }
+
+  fs.writeFileSync(globalFile, JSON.stringify(Array.from(map.values()), null, 2));
+}
   const gql = `
     query LocationInventoryLevels($locationId: ID!, $after: String) {
       location(id: $locationId) {
@@ -102,6 +130,7 @@ function ensureDirExists(dirPath) {
 
         return {
           id: prod.id,
+          variantId: variant.id,
           title: prod.title,
           image: prod.featuredImage?.url || "",
           available: qty,
@@ -121,7 +150,7 @@ function ensureDirExists(dirPath) {
     ensureDirExists(path.dirname(filename));
     fs.writeFileSync(filename, JSON.stringify(items, null, 2), "utf-8");
     console.log(`Saved products JSON for location ${locationId} at: ${filename}`);
-
+    mergeIntoGlobalFile(items);
     res.json({ totalCount: items.length, items });
   } catch (err) {
     console.error("Error fetching products batch:", err);

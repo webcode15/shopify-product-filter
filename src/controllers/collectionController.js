@@ -10,7 +10,7 @@ const __dirname = dirname(__filename);
 
 const allLocationsProducts = JSON.parse(
   fs.readFileSync(
-    path.join(__dirname, "./cached/all_products_gid.json"),
+    path.join(__dirname, "./cached/products_all_locations.json"),
     "utf-8"
   )
 );
